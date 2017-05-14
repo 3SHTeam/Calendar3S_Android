@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bignerdranch.android.calendar3s.Login.LoginFragment">
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:text="  ID : "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/userId"
+                android:layout_weight="1"
+                android:background="@android:color/background_light" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:text=" PW :"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/userPw"
+                android:layout_weight="1"
+                android:background="@android:color/background_light" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:id="@+id/autoLoginCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="자동로그인"/>
+
+        </LinearLayout>
+
+        <Button
+            android:text="Login"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginButton"
+            android:layout_weight="0"
+            android:layout_width="200dp" />
+        <Button
+            android:text="구글아이디가 없으세요?"
+            android:layout_height="wrap_content"
+            android:id="@+id/registerToGoogleBtn"
+            android:layout_weight="0"
+            android:layout_width="200dp" />
+
+        <Button
+            android:text="시작하기"
+            android:layout_height="wrap_content"
+            android:id="@+id/startRegisterBtn"
+            android:layout_weight="0"
+            android:layout_width="200dp" />
+
+
+    </LinearLayout>
+</RelativeLayout>

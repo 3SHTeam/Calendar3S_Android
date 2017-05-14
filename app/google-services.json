@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "283629187401",
+    "firebase_url": "https://calendar3s-994b3.firebaseio.com",
+    "project_id": "calendar3s-994b3",
+    "storage_bucket": "calendar3s-994b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283629187401:android:af713624958b28ba",
+        "android_client_info": {
+          "package_name": "com.bignerdranch.android.calendar3s"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283629187401-c9ko09eqnvi5u7qpdj272hdto36p34on.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bignerdranch.android.calendar3s",
+            "certificate_hash": "3d6cf0dcf6f4e771df947b9260e36b4ba86d23ac"
+          }
+        },
+        {
+          "client_id": "283629187401-85nno1c67h9i7u9spfij09vilb2rg7oj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSoUOmIXSQen1TGD2mRHpbhnoHu9m7y-A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283629187401-85nno1c67h9i7u9spfij09vilb2rg7oj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

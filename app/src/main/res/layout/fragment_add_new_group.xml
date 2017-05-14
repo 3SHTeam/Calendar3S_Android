@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <EditText
+        android:id="@+id/newGroupNameEditText"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="그룹명을 입력하세요"/>
+    <EditText
+        android:id="@+id/newGroupIntroEditText"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="그룹 한줄 소개를 입력하세요"/>
+    <Button
+        android:id="@+id/checkMakingGroupBtn"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:text="그룹 만들기"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
