@@ -1,6 +1,8 @@
 package com.bignerdranch.android.calendar3s.Schedule;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
@@ -14,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bignerdranch.android.calendar3s.MainActivity;
 import com.bignerdranch.android.calendar3s.R;
 import com.bignerdranch.android.calendar3s.data.EventData;
 
@@ -24,7 +27,7 @@ import java.util.Calendar;
  * Created by ieem5 on 2017-05-12.
  */
 
-public class ClickListFragment extends Fragment {
+public class ClickListFragment extends Fragment implements MainActivity.onKeyBackPressedListener{
     private  static final int   REQUEST_DAILY_SCHDULE = 0;
 
 private  ListView listView;
@@ -51,15 +54,22 @@ private  ArrayAdapter<String>eventTitleAdapter;
     }
     String dateStr;
 
+    private MainActivity main;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        //getCalendar().get(Calendar.DAY_OF_WEEK);
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View v = layoutInflater.inflate(R.layout.fragment_schedule_list,null);
+
+        main = ((MainActivity)getActivity());
+
+
         dateTv = (TextView)v.findViewById(R.id.dateTv);
         dateStr =  getCalendar().get(Calendar.YEAR)  +"년"+(getCalendar().get(Calendar.MONTH)+1)+"월"+
-               getCalendar().get(Calendar.DATE)+"일 일정";
+               getCalendar().get(Calendar.DATE)+"일 "+getDay( getCalendar().get(Calendar.DAY_OF_WEEK))+"요일 일정";
         Log.i("listClick",dateStr);
         //dateTv.setText(dateStr);
         eventTitleList = new ArrayList<>();
@@ -88,6 +98,34 @@ private  ArrayAdapter<String>eventTitleAdapter;
 
     }
 
+    public String getDay(int dayOfWeek){
+        String yoil="";
+        switch (dayOfWeek){
+            case 1:
+                yoil="일";
+                break;
+            case 2:
+                yoil="월";
+                break;
+            case 3:
+                yoil="화";
+                break;
+            case 4:
+                yoil="수";
+                break;
+            case 5:
+                yoil="목";
+                break;
+            case 6:
+                yoil="금";
+                break;
+            case 7:
+                yoil="토";
+                break;
+        }
+
+        return  yoil;
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -101,6 +139,21 @@ private  ArrayAdapter<String>eventTitleAdapter;
                 Log.i("listClick","title : "+title+"  "+position+" is Clicked!");
             }
         });
+    }
+
+    //메인의 백키를 실행시킨다.
+    @Override
+    public void onBack() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setOnKeyBackPressedListener(null);
+        activity.ChangeFragment(R.id.calendars);
+    }
+
+    //자신의 백키를 불러오게 등록
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) context).setOnKeyBackPressedListener(this);
     }
 
     public void showDailyEventDataDetail(String eventTitle,Calendar calendar){

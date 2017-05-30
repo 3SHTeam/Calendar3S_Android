@@ -3,7 +3,8 @@ package com.bignerdranch.android.calendar3s.Schedule;
 
 import android.Manifest;
 
-import com.bignerdranch.android.calendar3s.Dialog.SelectTagFromAddScheduleDialogFragment;
+import com.bignerdranch.android.calendar3s.BusProvider;
+
 import com.bignerdranch.android.calendar3s.MainActivity;
 import com.bignerdranch.android.calendar3s.R;
 import android.accounts.Account;
@@ -15,6 +16,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +36,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,6 +49,7 @@ import com.bignerdranch.android.calendar3s.Dialog.TimePickerFragment;
 import com.bignerdranch.android.calendar3s.data.CalData;
 import com.bignerdranch.android.calendar3s.data.EventData;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,9 +65,15 @@ import com.bignerdranch.android.calendar3s.database.SendToDB;
  */
 
 //test 0323
-public class AddScheduleDialogFragment extends Fragment  /*implements MainActivity.onKeyBackPressedListener*/{
+public class AddScheduleDialogFragment extends Fragment implements MainActivity.onKeyBackPressedListener {
 
  //CalendarProvider calendarProvider;
+
+    String gmail="";
+
+
+    long CalID;
+/*
 String gmail="";
 
 
@@ -73,6 +86,7 @@ long CalID;
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
             CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
     };
+*/
 
     // The indices for the projection array above.
     private static final int PROJECTION_ID_INDEX = 0;
@@ -93,12 +107,14 @@ long CalID;
     public static final String EXTRA_EVENTDATA = "com.bignerdranch.android.calendar3s.Schedule.addScheduleFragment.eventData";
     public static final String DIALOG_SELECT_TAG ="DialogSelectTag";
     AlertDialog.Builder  builder;
+
     private EditText ScheduleEditText;//스제줄명 입력
 
     private Button startTimeBtn;//시작 시간
     private Button finishTimeBtn;// 종료 시간
     private Button showMapBtn;//지도보기 버튼
     private EditText LocationEv;
+
 
     private Calendar selectedCal;//선택된 날짜 객체
     private  String selectedDate; // '2017년 1월 17일 일정'
@@ -121,12 +137,16 @@ long CalID;
 
     private  ArrayList<TagData>tagDatas;
     //태그  리스트뷰 어댑터
-    private ArrayAdapter<String>tagListViewAdapter;
+
+    private ScheduleTagListViewAdapterNoCBox scheduleTagListViewAdapter;
+
+
+
 
     //선택된 태그 이름
     private String selecetedTagName;
     //선택된 태그 id
-    private String selecetedTagId;
+    private String selectedTagId;
 
 
     //2017년 1월 17일 일정'   --> 선택한 날짜 받아와야 함.
@@ -159,6 +179,8 @@ long CalID;
     CalData inputCalData;
 
 
+    private MainActivity main;
+
 
 
 
@@ -186,24 +208,23 @@ long CalID;
     }
 
     //메인 액티비티로 데이터를 전달할 커스텀 리스너 연결
-    @Override
+   /* @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         passEventDataToMainListener = (PassEventDataToMainListener)context;
-    }
+    }*/
 
-   public interface PassEventDataToMainListener{
+   /*public interface PassEventDataToMainListener{
        public void eventDataReceived(String eventId,String eventTitle,String eventStartTime,
                                      String eventEndTime,String location,String tagId);
-   }
+   }*/
 
-   private PassEventDataToMainListener passEventDataToMainListener;
+  // private PassEventDataToMainListener passEventDataToMainListener;
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-
-
+        main = ((MainActivity)getActivity());
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View v = layoutInflater.inflate(R.layout.fragment_add_schedule,null);
@@ -235,14 +256,14 @@ long CalID;
         selectedDate = selectedCal.get(Calendar.YEAR)+"년"+(selectedCal.get(Calendar.MONTH)+1)+"월"+
                 selectedCal.get(Calendar.DATE)+"일";
         addScheduleDateTv.setText(selectedDate);
-        gmail = getAccount();
+        gmail = main.getAccount();
         // Run query
         //calendar id 구하기
-        calID = getCalID();
+        calID = main.getCalID();
+        Log.i("ottoL","FROM MAIN gmail: "+gmail+"calID : "+calID);
 
 
 
-        //String[]str={"fff","sss","aaa"};
 
 
 
@@ -258,26 +279,45 @@ long CalID;
         }
 
 
-        tagListViewAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1,tagList);
 
-        scheduleTagNameListView.setAdapter(tagListViewAdapter);
+
+        scheduleTagListViewAdapter =new ScheduleTagListViewAdapterNoCBox();
+        //String tagId,String tagTitle, String tagColor,String groupId,boolean b
+        for(int i=0;i<len;i++) {
+            scheduleTagListViewAdapter.addItem(tagDatas.get(i).getData(0), tagDatas.get(i).getData(1), tagDatas.get(i).getData(2),
+                    tagDatas.get(i).getData(5), tagDatas.get(i).isCheckbox());
+        }
+
+        scheduleTagListViewAdapter.notifyDataSetChanged();
+
+        scheduleTagNameListView.setAdapter(scheduleTagListViewAdapter);
+
+
         scheduleTagNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ListView listView = (ListView)parent;
-                selecetedTagName = (String)listView.getItemAtPosition(position);
+
+
+                ScheduleTagListViewItemNoCBox item =   (ScheduleTagListViewItemNoCBox) listView.getItemAtPosition(position);
+                selecetedTagName = item.getTagTitle();
                 //사용자가 태그를 선택하지 않았으면 기본 태그로 설정
+                if( item == null){
+                    selecetedTagName = ((ScheduleTagListViewItemNoCBox)  listView.getItemAtPosition(0)).getTagTitle();
+
+                }
 
                 for( int i=0;i<tagDatas.size();i++){
                     if(tagDatas.get(i).getData(1).equals(selecetedTagName)){
                         //태그이름과 일치하는 태그 아이디 저장
 
-                        selecetedTagId = tagDatas.get(i).getData(0);
+                        selectedTagId = tagDatas.get(i).getData(0);
                         //아이디를 MAIN으로 보내야한다?
                         break;
                     }
                 }//end of for
+
+
             }
 
 
@@ -285,29 +325,29 @@ long CalID;
         //태그 버튼 눌렀을 때 태그리스트 보이게 하기
 
         selectTagBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tagListLayout.setVisibility(View.VISIBLE);
-            }
-        });
-        //태그선택 버튼 누르면 태그 리스트뷰 뜨게 하기
-        selectTagOKBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                                @Override
+                                public void onClick(View v) {
+                                    tagListLayout.setVisibility(View.VISIBLE);
+                                }
+                            });
+                                //태그 선택하고 확인 누르면 리스트뷰 다시 안 보이게
+                                selectTagOKBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-                tagListLayout.setVisibility(View.GONE);
-                //사용자가 태그 선택 하지 않았을 경우
-                String defaultTag="";
-                if(selecetedTagName ==null){
+                                        tagListLayout.setVisibility(View.GONE);
+                                        //사용자가 태그 선택 하지 않았을 경우
+                                        String defaultTag="";
+                                        if(selecetedTagName ==null){
 
                     selecetedTagName =  getTagDatas().get(0).getData(1);
-                    selecetedTagId=getTagDatas().get(0).getData(0);
+                    selectedTagId=getTagDatas().get(0).getData(0);
                     defaultTag="태그 선택 하지 않음!";
                 }
                 //선택된 리스트뷰이 이름으로 텍스트뷰 세팅하고 아이디 출력해야 한다.
                 selectedTagTv.setText(selecetedTagName);
                 Toast.makeText(getActivity(),defaultTag+"tagName : "+selecetedTagName+" , "+
-                        "tagId : "+selecetedTagId,Toast.LENGTH_SHORT).show();
+                        "tagId : "+selectedTagId,Toast.LENGTH_SHORT).show();
 
               /*  //이거 부를 때 태그 이름 불러와서 뿌려줘야 함
                tagDatas =  ((MainActivity)getActivity()).getTagDatas();
@@ -336,7 +376,8 @@ long CalID;
             public void onClick(View v) {
                 date = new Date();
                 FragmentManager manager = getFragmentManager();
-                TimePickerFragment startTimeDialog =  new TimePickerFragment();
+               // TimePickerFragment startTimeDialog =  new TimePickerFragment();
+                TimePickerFragment startTimeDialog = TimePickerFragment.newInstance(date);
                 startTimeDialog.setTargetFragment(AddScheduleDialogFragment.this,REQUEST_START_TIME);
                 startTimeDialog.show(manager,DIALOG_START_TIME);
 
@@ -349,7 +390,8 @@ long CalID;
             public void onClick(View v) {
                 date = new Date();
                 FragmentManager manager = getFragmentManager();
-                TimePickerFragment finishTimeDialog = new TimePickerFragment();
+               // TimePickerFragment finishTimeDialog = new TimePickerFragment();
+                TimePickerFragment finishTimeDialog = TimePickerFragment.newInstance(date);
                 finishTimeDialog.setTargetFragment(AddScheduleDialogFragment.this,REQUEST_FINISH_TIME);
                 finishTimeDialog.show(manager,DIALOG_FINISH_TIME);
 
@@ -357,9 +399,15 @@ long CalID;
         });
 
         //장소선택 버튼 누르면 지도 볼 수 있는 창 나오고 선택하면 장소명만 가져오기
+        //주소 입력 후 지도 버튼 클릭시 해당 위도 경도 값의 지도화면으로 이동
+
+final Geocoder geocoder = new Geocoder(getActivity());
         showMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<Address>list = null;
+                String location = LocationEv.getText().toString();
+               // double  lat =
                 //지도 인텐트
                 Uri uri = Uri.parse("geo:38.899533,-77.036476");
 
@@ -376,29 +424,42 @@ long CalID;
 
 
         addScheduleBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
                 //구글에 스케줄을 등록하고 구글 스케줄 아이디를 저장한다.
                 eventDataToMain = new EventData();
-                eventDataToMain = addEventToCalendarandGetEventID(calID);
-                //AddScheduleFragment ->MonthCalendarFragment로 eventData전달
+                //eventDataToMain = main.addEventToCalendarandGetEventID(calID);
 
+                schedeulEditTextStr = ScheduleEditText.getText().toString();
 
+                eventLocation = LocationEv.getText().toString();
+                if(startMillis ==0 || endMillis == 0 || schedeulEditTextStr.equals("") || eventLocation.equals("")){
+                    Toast.makeText(getActivity(),"다 입력하지 않았습니다. 확인해보세요! "
+                            ,Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                //AddScheduleFragment ->MonthCalendarFragment로 eventData전달후 스케줄 추가
+                eventDataToMain = main.addEventToCalendarandGetEventID(calID,startMillis,endMillis,schedeulEditTextStr,eventLocation);
+                Log.i("ottoL","확인 calID : "+calID);
+                //스케줄 입력 창에 빈칸 ㅇ있으면 여기서 에러남!!!
+                Log.i("ottoL","확인 eventDataToMain : "+eventDataToMain.toString());
 
 
                 if(eventDataToMain == null){
                     Toast.makeText(getActivity(),"입력한 값이 없어 스케줄 등록되지 않음! "
                             ,Toast.LENGTH_LONG).show();
 
+                      //빈스케줄 등록시 스케줄 등록되지 않음 메시지 띄우기!!
 
 
                     //스케줄 등록하지 않아도 내가 조회했던 캘린더로 돌아가야 하므로
                     //내가 선택한 날짜 정보만 넘겨준다. 스케줄 추가 창 종료하면 오늘날짜 캘린더가 아니라
                     // 내가 조회했던 캘린더 보일 수 있도록
-                    passEventDataToMainListener.eventDataReceived("", "",
-                            "",String.valueOf(selectedCal.getTimeInMillis()),"","");
-
+                   /* passEventDataToMainListener.eventDataReceived("", "",
+                            "",String.valueOf(selectedCal.getTimeInMillis()),"","");*/
 
                     ( (MainActivity)getActivity()).ChangeFragment(R.id.calendars);
 
@@ -407,9 +468,17 @@ long CalID;
 
                  else{
 
+
                     //여기서 스케줄 태그 아이디 보내야한다???
-                    passEventDataToMainListener.eventDataReceived(eventDataToMain.getData(7), eventDataToMain.getData(2),
-                            eventDataToMain.getData(3),eventDataToMain.getData(4),eventDataToMain.getData(5),selecetedTagId);
+                   /* passEventDataToMainListener.eventDataReceived(eventDataToMain.getData(7), eventDataToMain.getData(2),
+                            eventDataToMain.getData(3),eventDataToMain.getData(4),eventDataToMain.getData(5),selectedTagId);*/
+
+                    Log.i("ottoL"," 확인 FROM ADD 메인으로 이벤트 데이터  : "+eventDataToMain.toString());
+
+
+                    eventDataToMain.setTagid(selectedTagId);
+                    Log.d("TAG","selectedTagId : "+selectedTagId);
+                    BusProvider.getInstance().post(eventDataToMain);
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/HH/mm");
                     String stime =  sdf.format(Long.parseLong(eventDataToMain.getData(4)));
@@ -422,6 +491,11 @@ long CalID;
                     Log.i("ttt","eventId: "+eventDataToMain.getData(7)+"Added Successfully! Title : "+
                             eventDataToMain.getData(2)+"시작시간 : "+
                             stime+"종료시간 : "+etime+"장소 : "+eventDataToMain.getData(3));
+
+                    Log.i("tata","tataAdd eventId: "+eventDataToMain.getData(7)+"Added Successfully! Title : "+
+                            eventDataToMain.getData(2)+"시작시간 : "+
+                            stime+"종료시간 : "+etime+"장소 : "+eventDataToMain.getData(3));
+
 
                     //화면전환
                     ((MainActivity)getActivity()).ChangeFragment(R.id.calendars);
@@ -456,18 +530,6 @@ long CalID;
     }
 
 
-    /*
-    @Override
-    public void onBack() {
-
-        MainActivity activity = (MainActivity) getActivity();
-        activity.setOnKeyBackPressedListener(null);
-        activity.ChangeFragment(R.id.calendars);
-    }*/
-
-
-
-
 
     //TimePicker에서 선택한 시간 받아오는 코드
     @Override
@@ -488,14 +550,18 @@ long CalID;
            // String getDataString = format.format(date);
              hour = data.getIntExtra(TimePickerFragment.EXTRA_TIME_HOUR,0);
              minute = data.getIntExtra(TimePickerFragment.EXTRA_TIME_MINUTE,0);
-            AM_PM = data.getStringExtra(TimePickerFragment.EXTRA_TIME_AM_PM);
+
             //long형인 시간을 Event로 처리할 수 있음
             //yyyyMMddHHmmss
             //'2017년1월17일'에서 년월일 뽑아오기
+              String startHour="";
+            String startMin="";
+             if(hour<10)startHour = "0"+hour;
+            else startHour=hour+"";
+            if(minute<10)  startMin="0"+minute;
+            else startMin=minute+"";
+                startTimeTV.setText(startHour+" : "+startMin);
 
-
-            if(minute<10)  startTimeTV.setText(hour+" : "+"0"+minute+" "+AM_PM);
-            else startTimeTV.setText(hour+" : "+minute+" "+AM_PM);
             //String dateClean= selectedDate.replaceAll("[^0-9]", "");//20170227 이런형식
             String dateClean= ""+selectedCal.get(Calendar.YEAR)+(selectedCal.get(Calendar.MONTH)+1)+
                     selectedCal.get(Calendar.DATE);// 20170227 이런형식
@@ -532,12 +598,17 @@ long CalID;
             // String getDataString = format.format(date);
              hour = data.getIntExtra(TimePickerFragment.EXTRA_TIME_HOUR,0);
              minute = data.getIntExtra(TimePickerFragment.EXTRA_TIME_MINUTE,0);
-            AM_PM = data.getStringExtra(TimePickerFragment.EXTRA_TIME_AM_PM);
 
 
+            String endHour="";
+            String endMin="";
+            if(hour<10)endHour = "0"+hour;
+            else endHour=hour+"";
+            if(minute<10)  endMin="0"+minute;
+            else endMin=minute+"";
 
-            if(minute<10)  finishTimeTv.setText(hour+" : "+"0"+minute+" "+AM_PM);
-            else finishTimeTv.setText(hour+" : "+minute+" "+AM_PM);
+             finishTimeTv.setText(endHour+" : "+endMin);
+
           //  dateClean= selectedDate.replaceAll("[^0-9]", "");//20170227 이런형식
             String dateClean= ""+selectedCal.get(Calendar.YEAR)+(selectedCal.get(Calendar.MONTH)+1)+
                     selectedCal.get(Calendar.DATE);// 20170227 이런형식
@@ -563,7 +634,7 @@ long CalID;
 
 
 
-    public String getAccount() {
+ /*   public String getAccount() {
 
         final int REQUEST_GET_ACCOUNT = 0;
         //안드로이드 계정 불러오기
@@ -587,9 +658,9 @@ long CalID;
         return account.name;
 
 
-    }
+    }*/
 
-    public long    changeTime(String time){
+    public long changeTime(String time){
 
         String []yMd = new String[9];
 
@@ -609,7 +680,7 @@ long CalID;
     }
 
 
-    public long getCalID() {
+   /* public long getCalID() {
 
         String[] EVENT_PROJECTION = new String[]{
                 //SQL의 SELECT 문에 해당. 열 리턴, null 사용시 모든 열 리턴
@@ -641,9 +712,9 @@ long CalID;
                             , REQUEST_READ_CALENDAR_PERMISSION);
         }
         cur = cr.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
-        /*String displayName = null;
+        *//*String displayName = null;
         String accountName = null;
-        String ownerName = null;*/
+        String ownerName = null;*//*
         long calID = 0;
 
         while (cur.moveToNext()) {
@@ -660,7 +731,7 @@ long CalID;
         return calID;
 
 
-    }
+    }*/
 
 /*    public void  addAttendeeToEvent(String eventId){
         if(attendeeEv.getText().toString().length()!=0){
@@ -686,7 +757,7 @@ long CalID;
 
 
     }*/
-public EventData addEventToCalendarandGetEventID(long calID){
+/*public EventData addEventToCalendarandGetEventID(long calID){
 
     final int  REQUEST_WRITE_CALENDAR_PERMISSION = 1;
     ContentResolver insertCr= getActivity().getContentResolver();
@@ -707,10 +778,10 @@ public EventData addEventToCalendarandGetEventID(long calID){
     values.put(Events.DTEND, endMillis);
     //  schedeulEditTextStr = ScheduleEditText.getText().toString();
     values.put(Events.TITLE,  ScheduleEditText.getText().toString() );
-   /* if(SummaryScheduleEditText.getText().toString().length()==0){
+   *//* if(SummaryScheduleEditText.getText().toString().length()==0){
         SummaryScheduleEditText.setText("");
 
-    }*/
+    }*//*
    /// values.put(Events.DESCRIPTION,   SummaryScheduleEditText.getText().toString());
     values.put(Events.CALENDAR_ID, calID);
     values.put(Events.EVENT_TIMEZONE, "Asia/Seoul");
@@ -753,7 +824,7 @@ public EventData addEventToCalendarandGetEventID(long calID){
 
 
 
-}
+}*/
 
    /* public String  addEventToCalendarandGetEventID(long calID){
 
@@ -818,12 +889,27 @@ public EventData addEventToCalendarandGetEventID(long calID){
 
     }
 
-    public String getYMDHM(long time){
+   /* public String getYMDHM(long time){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
         Log.e("AAA","바꾼 시간: "+sdf.format(time));
         return sdf.format(time);
+    }*/
+
+
+    //메인의 백키를 실행시킨다.
+    @Override
+    public void onBack() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setOnKeyBackPressedListener(null);
+        activity.ChangeFragment(R.id.calendars);
     }
 
+    //자신의 백키를 불러오게 등록
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) context).setOnKeyBackPressedListener(this);
+    }
 
 }
 
