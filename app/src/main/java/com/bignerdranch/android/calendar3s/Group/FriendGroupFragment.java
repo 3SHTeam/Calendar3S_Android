@@ -1,6 +1,7 @@
 package com.bignerdranch.android.calendar3s.Group;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,12 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bignerdranch.android.calendar3s.MainActivity;
 import com.bignerdranch.android.calendar3s.R;
 import com.bignerdranch.android.calendar3s.Schedule.ScheduleManager;
 
 
-public class FriendGroupFragment extends Fragment {
-    private ScheduleManager SM;
+public class FriendGroupFragment extends Fragment implements MainActivity.onKeyBackPressedListener{
 
     private FragmentTabHost tabHost;
 
@@ -27,7 +28,6 @@ public class FriendGroupFragment extends Fragment {
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-        SM = new ScheduleManager();//메인에서 받아오는 것으로 변경
     }
 
     @Nullable
@@ -38,8 +38,9 @@ public class FriendGroupFragment extends Fragment {
         tabHost = (FragmentTabHost)v.findViewById(android.R.id.tabhost);
         tabHost.setup(getActivity(),getChildFragmentManager(),android.R.id.tabcontent);
 
-        tabHost.addTab(tabHost.newTabSpec("Friend List").setIndicator("Friend List"),
-                FriendListFragment.class,null);
+//        tabHost.addTab(tabHost.newTabSpec("Friend List").setIndicator("Friend List"),
+//                FriendListFragment.class,null);
+
         tabHost.addTab(tabHost.newTabSpec("Group List").setIndicator("Group List"),
                 GroupListFragment.class,null);
         ///0325
@@ -48,6 +49,21 @@ public class FriendGroupFragment extends Fragment {
 
 
         return v;
+    }
+
+    //달력화면으로 돌아간다.
+    @Override
+    public void onBack() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setOnKeyBackPressedListener(null);
+        activity.ChangeFragment(R.id.calendars);
+    }
+
+    //자신의 백키를 불러오게 등록
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) context).setOnKeyBackPressedListener(this);
     }
 
 }

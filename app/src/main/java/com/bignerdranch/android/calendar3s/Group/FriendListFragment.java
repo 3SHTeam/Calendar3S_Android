@@ -14,7 +14,6 @@ import com.bignerdranch.android.calendar3s.Schedule.ScheduleManager;
 
 
 public class FriendListFragment extends Fragment {
-    private ScheduleManager SM;
     private ListView listView;
 
     public FriendListFragment newInstance(){
@@ -30,7 +29,6 @@ public class FriendListFragment extends Fragment {
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-        SM = new ScheduleManager();//메인에서 받아오는 것으로 변경
 
     }
 
