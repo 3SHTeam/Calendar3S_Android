@@ -2,6 +2,7 @@ package com.bignerdranch.android.calendar3s.database;
 
 import com.bignerdranch.android.calendar3s.data.EventData;
 import com.bignerdranch.android.calendar3s.data.GroupData;
+import com.bignerdranch.android.calendar3s.data.MessageData;
 import com.bignerdranch.android.calendar3s.data.TagData;
 import com.bignerdranch.android.calendar3s.data.UserData;
 
@@ -22,7 +23,11 @@ public class JsonMaster {
     private ArrayList<TagData> tags = new ArrayList<TagData>();
     private ArrayList<GroupData> Groups =new ArrayList<GroupData>();
     private ArrayList<String> userIds_Arr = new ArrayList<String>();// 회원 아이디
+    public ArrayList<MessageData> messages = new ArrayList<MessageData>();
 
+
+    public ArrayList<MessageData> getMessages() {return messages;}
+    public void setMessages(ArrayList<MessageData> messages) {this.messages = messages;}
 
     public String getResult() {return result;}
     public void setResult(String result) {this.result = result;}
@@ -72,8 +77,80 @@ public class JsonMaster {
             case "SelectInsertSchedule":
                 SelectInsertSchedule(str);
                 break;
+
+            case "SelectMyMessage":
+                SelectMyMessage(str);
+                break;
+
+            case "SelectMyGroupTag":
+                SelectMyGroupTag(str);
+                break;
         }
     }
+
+    private void SelectMyGroupTag(String str) {
+
+        try{
+            JSONObject root = new JSONObject(str);
+            if(root.get("rownum").equals("0")) {
+                this.result = "";
+                System.out.println("그룹태그가 없음!");
+                return;
+            }
+
+            JSONArray ja = root.getJSONArray("result");
+
+            for(int i=0; i<ja.length(); i++){
+                JSONObject jo = ja.getJSONObject(i);
+                this.result = jo.getString("Tagid");
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void SelectMyMessage(String str) {
+        String Mid;
+        String sender;
+        String receiver;
+        String type;
+        String message;
+        String Gid;
+        String Gname;
+
+        MessageData mdata;
+        try{
+            JSONObject root = new JSONObject(str);
+            if(root.get("rownum").equals("0")) {
+                this.messages = null;
+                System.out.println("메세지가 없음!");
+                return;
+            }
+
+            JSONArray ja = root.getJSONArray("result");
+
+            for(int i=0; i<ja.length(); i++){
+                JSONObject jo = ja.getJSONObject(i);
+                Mid = jo.getString("Mid");
+                sender= jo.getString("sender");
+                receiver = jo.getString("receiver");
+                type = jo.getString("type");
+                message = jo.getString("message");
+                Gid = jo.getString("Gid");
+                Gname = jo.getString("Gname");
+
+                System.out.println(Mid + " , " + sender + " , " + receiver
+                        + " , " + type + " , " + message + " , " + Gid + " , " + Gname);
+
+                mdata= new MessageData(Mid, sender, receiver, type, message, Gid, Gname);
+                this.messages.add(mdata);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+
 
     private void SelectInsertSchedule(String str) {
         String Sid;

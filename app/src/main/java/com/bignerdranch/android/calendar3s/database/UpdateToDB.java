@@ -15,22 +15,23 @@ import okhttp3.Response;
  * Created by ieem5 on 2017-04-14.
  */
 
-public class SendToDB extends Thread{
+public class UpdateToDB extends Thread{
     private static final String TAG = "SendToDB";
-    private String PHP, message;
+    private String PHP, message, id;
     private String result;
     private static OkHttpClient client;
 
-    public SendToDB(String php, String message){
+    public UpdateToDB(String php, String message, String id){
         PHP = php;
         this.message = message;
-        Log.d("sendDB","php = " + PHP + " message = " + this.message);
+        this.id = id;
+        Log.d("sendDB","php = " + PHP + " message = " + this.message + " id = " + this.id);
 
     }
 
     @Override
     public void run() {
-        Log.d("sendDB","start");
+        Log.d("UpdateToDB","start");
         client = new OkHttpClient();
 
         HttpUrl.Builder builder = new HttpUrl.Builder();
@@ -42,10 +43,11 @@ public class SendToDB extends Thread{
 
         RequestBody body = new FormBody.Builder()
                 .add("message",message)
+                .add("id",id)
                 .build();
 
-        Log.d("sendDB","url = " + builder.build());
-        Log.d("sendDB","builderString  = " + builder.toString());
+        Log.d("UpdateToDB","url = " + builder.build());
+        Log.d("UpdateToDB","builderString  = " + builder.toString());
 
         //request
         Request request = new Request.Builder()
@@ -65,7 +67,7 @@ public class SendToDB extends Thread{
             e.printStackTrace();
         }
 
-        Log.d("sendDB","end");
+        Log.d("UpdateToDB","end");
     }
 
     public String getResult() {
