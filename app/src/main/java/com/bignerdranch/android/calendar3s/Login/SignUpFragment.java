@@ -117,14 +117,15 @@ public class SignUpFragment extends Fragment {
 
         String nickname = nickNameEv.getText().toString();
         String word = wordEv.getText().toString();
+        MainActivity main = ((MainActivity)this.getActivity());
 
 
-        Log.d("Signup","idcheck");
+        Log.d("Signup","idcheck = " + googleId);
         //DB에서 아이디 중복체트
-        if(CheckUser("where Googleid = '" + googleId + "'")) {
+        if(main.CheckUser("where Googleid = '" + googleId + "'")) {
 
             //파이어 베이스에사용자 추가
-            MainActivity main = ((MainActivity)this.getActivity());
+            main.SetFirebaseListener();
             main.signupFireBase(googleId, googlePw);
 
             // 파이어 베이스 로그인
@@ -165,7 +166,7 @@ public class SignUpFragment extends Fragment {
 
     private void AddFirestTag(String name) {
         String message = "'" + name + "','" + name + "','" + "#82B926"
-                +"','맑은고딕','15'";
+                +"','맑은고딕','15','NULL'";
         String url = "InsertTag.php";
 
         SendToDB stDB = new SendToDB(url,message);
@@ -176,26 +177,6 @@ public class SignUpFragment extends Fragment {
         } catch (InterruptedException e) {
             Log.e("insertTag", "fail :" +e.toString());
         }
-    }
-
-    private boolean CheckUser(String message){
-        //DB에 사용자 추가
-        String php = "SelectMyProfile.php";
-
-        SendToDB sendToDB = new SendToDB(php, message);
-        sendToDB.start();// DB연결 스레드 시작
-        try {
-            sendToDB.join();// DB연결이 완료될때까지 대기
-        } catch (InterruptedException e) {
-            System.out.println(e.toString());
-        }
-
-        JsonMaster jsonMaster = new JsonMaster();
-        jsonMaster.onPostExecute("SelectMyProfile", sendToDB.getResult());
-        UserData userData = jsonMaster.getUser();
-
-        if(userData == null) return true;
-        else return false;
     }
 
     private void AddUser(String message){

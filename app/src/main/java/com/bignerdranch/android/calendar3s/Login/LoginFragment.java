@@ -13,16 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.bignerdranch.android.calendar3s.MainActivity;
 import com.bignerdranch.android.calendar3s.R;
 import com.bignerdranch.android.calendar3s.Login.SignUpFragment;
 
 
-public class LoginFragment extends Fragment implements MainActivity.onKeyBackPressedListener {
-    private EditText userId,userPw;
+public class LoginFragment extends Fragment {
+    private EditText userId, userPw;
     private Button loginButton;
-    private  Button startBtn;
+    private Button startBtn;
 
     public LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
@@ -45,52 +46,51 @@ public class LoginFragment extends Fragment implements MainActivity.onKeyBackPre
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
 
-        userId = (EditText)v.findViewById(R.id.userId);
+        userId = (EditText) v.findViewById(R.id.userId);
 
-        userPw = (EditText)v.findViewById(R.id.userPw);
+        userPw = (EditText) v.findViewById(R.id.userPw);
 
-        loginButton = (Button)v.findViewById(R.id.loginButton);
+        loginButton = (Button) v.findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String id = userId.getText().toString().trim();
                 String pw = userPw.getText().toString().trim();
 
-                //서버에서 구글 아이디와 비밀번호를 확인하기
-                // 파이어 베이스 로그인
-                MainActivity main = ((MainActivity)getActivity());
-              id="test0@hansung.ac.kr";
-               pw="111111";
-               main.signinFireBase(id,pw);
-                Log.d("Login FB","ID : " + main.getFBid());
+                MainActivity main = ((MainActivity) getActivity());
+
+                if(!main.CheckUser("where Googleid = '" + id + "'")) {
+                    //서버에서 구글 아이디와 비밀번호를 확인하기
+                    // 파이어 베이스 로그인
+                    //id = "test0@hansung.ac.kr";
+                    //pw = "111111";
+                    main.SetFirebaseListener();
+                    main.signinFireBase(id, pw);
+                    Log.d("Login FB", "ID : " + main.getFBid());
 
 
-                //DB에서 로그인한 유저로 데이터 가져오기
-                main.initDB(id,pw);
+                    //DB에서 로그인한 유저로 데이터 가져오기
+                    main.initDB(id, pw);
+                    //현재 기기토큰을 아이디에 등록
+                    main.updateToken();
 
-
-                /*
-               if(false){
-                   root.ChangeFragment(R.id.calendars);//첫 로그인 시에 튜토리얼
-               }
-               else {
-                    root.ChangeFragment(R.id.calendars);//로그인하면 달력 화면으로
-                }*/
-
-                main.ChangeFragment(R.id.calendars);
-
+                    main.ChangeFragment(R.id.calendars);
+                }
+                else{
+                    Toast.makeText(getActivity(),"로그인 실패! 등록되지 않은 아이디와 비밀번호!",Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
 
-        startBtn = (Button)v.findViewById(R.id.startRegisterBtn);
+        startBtn = (Button) v.findViewById(R.id.startRegisterBtn);
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SignUpFragment fragment = new SignUpFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.container,fragment);
+                fragmentTransaction.replace(R.id.container, fragment);
                 fragmentTransaction.commit();
 
             }
@@ -99,21 +99,5 @@ public class LoginFragment extends Fragment implements MainActivity.onKeyBackPre
         return v;
     }
 
-    @Override
-    public void onBack() {
-        // if (mWebView.canGoBack()) { //다른 조건이 있을 경우에 사용하기
-        //     mWebView.goBack();
-        // } else { }
-        MainActivity activity = (MainActivity) getActivity();
-        activity.setOnKeyBackPressedListener(null);
-        activity.onBackPressed();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        ((MainActivity) context).setOnKeyBackPressedListener(this);
-        Log.i("backKey", "LoginFragment onAttach");
-    }
 }
 
