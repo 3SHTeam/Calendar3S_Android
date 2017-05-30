@@ -16,6 +16,10 @@ import java.text.SimpleDateFormat;
 public class EventData implements DataInfo,Parcelable{
     private String[] uData = new String[9];
     private String longStartTime,longEndTime;
+    private String Tagid="null";
+
+    public String getTagid() {return Tagid;}
+    public void setTagid(String tagid) {Tagid = tagid;}
 
     public EventData(){
 
@@ -64,48 +68,18 @@ public class EventData implements DataInfo,Parcelable{
 
     };
 
-    //Main에서 고정 이벤트로 테스트할 때 사용
-    public EventData( String Sname){
-
-        //setData(0,Sid);// 1.이벤트 아이디,
-        //setData(1,SMaster);
-        setData(2,Sname);// 2. 이벤트 이름,
-        //setData(3,Place);// 6.이벤트 장소
-        //setData(4,StartTime);// 4.이벤트 시작시간
-       // setData(5,EndTime); // 5. 이벤트 종료시간
-        // setData(6,TagId);
-        // setData(7,GoogleSId);
-        // setData(8,GId);
-    }
-
-    public EventData(String GoogleSId, String Sname, String Place,
-                     String StartTime, String EndTime){
-
-        //setData(0,Sid);// 1.이벤트 아이디,
-        //setData(1,SMaster);
-        setData(2,Sname);// 2. 이벤트 이름,
-        setData(3,Place);// 6.이벤트 장소
-        setData(4,StartTime);// 4.이벤트 시작시간
-        setData(5,EndTime); // 5. 이벤트 종료시간
-        //setData(6,TagId);
-        setData(7,GoogleSId);
-        //setData(8,GId);
-
-        this.longStartTime = StartTime;
-        this.longEndTime = EndTime;
-    }
 
     public EventData(String Sid, String SMaster, String Sname, String Place,
                      String StartTime, String EndTime,String TagId,String GoogleSId,String GId){
 
-        setData(0,Sid);// 1.이벤트 아이디,
+        setData(0,Sid);
         setData(1,SMaster);
         setData(2,Sname);// 2. 이벤트 이름,
         setData(3,Place);// 6.이벤트 장소
         setData(4,StartTime);// 4.이벤트 시작시간
         setData(5,EndTime); // 5. 이벤트 종료시간
         setData(6,TagId);
-        setData(7,GoogleSId);
+        setData(7,GoogleSId);//이벤트 아이디
         setData(8,GId);
 
         this.longStartTime = StartTime;
@@ -156,8 +130,8 @@ public class EventData implements DataInfo,Parcelable{
 
     @Override
     public String toString() {
-        String str = "eventId:"+uData[0]+" eventTitle: "+uData[2]+"eventLocation : "+uData[3]+
-                " eventStartTime : "+uData[4]+ " eventEndTime : "+uData[5];
+        String str = "eventId: "+uData[7]+" eventTitle: "+uData[2]+" eventLocation : "+uData[3]+
+                "  eventStartTime :  "+uData[4]+ "  eventEndTime : "+uData[5];
         return str;
     }
 }

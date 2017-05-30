@@ -56,7 +56,6 @@ public class GroupData implements DataInfo {
         System.out.println("GroupName : " + uData[1]);
         System.out.println("comment : " + uData[2]);
         System.out.println("gmaster : " + uData[3]);
-        System.out.println("userIds : " + uData[4]);
     }
 
     public ArrayList<String> getUserIds_Arr() {
@@ -65,7 +64,7 @@ public class GroupData implements DataInfo {
 
     public void setUserIds_Arr() {
       /* DB에서 스케줄 가져오기 */
-        String url = "http://113.198.84.66/Calendar3S/SelectGroupMember.php";
+        String url = "SelectGroupMember.php";
 
         SendToDB stDB = new SendToDB(url, getData(0));
         stDB.start();// DB연결 스레드 시작
@@ -83,5 +82,14 @@ public class GroupData implements DataInfo {
         userIds_Arr = jm.getUserIds_Arr();
 
     }
+
+
+    @Override
+    public String toString() {
+        String str = "GId: "+uData[0]+" name: "+uData[1]+" comment : "+uData[2]+
+                "  gmaster :  "+uData[3]+"user_ids : "+getUserIds_Arr().toString();
+        return str;
+    }
+
 
 }
