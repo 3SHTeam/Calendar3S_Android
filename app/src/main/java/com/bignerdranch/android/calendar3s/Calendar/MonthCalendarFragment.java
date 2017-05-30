@@ -161,11 +161,19 @@ public class MonthCalendarFragment extends Fragment implements MainActivity.onKe
     }
 
 
+    //메인의 백키를 실행시킨다.
     @Override
     public void onBack() {
         MainActivity activity = (MainActivity) getActivity();
         activity.setOnKeyBackPressedListener(null);
         activity.onBackPressed();
+    }
+
+    //자신의 백키를 불러오게 등록
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) context).setOnKeyBackPressedListener(this);
     }
 
     @Override
@@ -182,10 +190,10 @@ public class MonthCalendarFragment extends Fragment implements MainActivity.onKe
         //스케줄 추가를 한 다음에 이벤트 리스트에 접근해야 함...
         for(int i=startday-1;i<startday+endDay-1;i++){
 
-            Log.i("ttt","i ,fromMain : 날짜"+"["+i+"] "+calDatas.get(i).getTotalDate());
+            Log.i("tata","i ,fromMain : 날짜"+"["+i+"] "+calDatas.get(i).getTotalDate());
 
             if(calDatas.get(i).getEventDataList()!=null ){
-                Log.i("ttt"," FromMainEvent : "+
+                Log.i("tata"," FromMainEvent : "+
                         calDatas.get(i).getEventDataList().toString());
             }
 
@@ -676,7 +684,7 @@ public class MonthCalendarFragment extends Fragment implements MainActivity.onKe
                     clickListFragment.setEventDataArrayList( getCalDatas().get(position).getEventDataList());
                     FragmentTransaction ft = getFragmentManager().beginTransaction().
                             replace(R.id.container,clickListFragment);
-                    ft.addToBackStack(null);
+                    //ft.addToBackStack(null);
                     clickListFragment.
                             setTargetFragment(getFragmentManager().findFragmentById(R.id.calendars),REQUEST_DAY_SCHDULE);
                     ft.commit();
