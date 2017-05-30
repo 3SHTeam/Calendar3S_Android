@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.bignerdranch.android.calendar3s.MainActivity;
 import com.bignerdranch.android.calendar3s.R;
 import com.bignerdranch.android.calendar3s.Schedule.AddScheduleDialogFragment;
 import com.bignerdranch.android.calendar3s.data.CalData;
@@ -86,8 +87,11 @@ String dialogmentTitle =selectedDate ;
                               FragmentTransaction ft = getFragmentManager().beginTransaction().
                                       replace(R.id.container,addScheduleDialogFragment);
                                ft.addToBackStack(null);
-                              addScheduleDialogFragment.
-                                      setTargetFragment(getFragmentManager().findFragmentById(R.id.calendars),REQUEST_EVENTDATA);
+                           /*   addScheduleDialogFragment.
+                                      setTargetFragment(getFragmentManager().findFragmentById(R.id.calendars),REQUEST_EVENTDATA);*/
+
+
+
                              ft.commit();
 
                               //AddScheduleDialogFragment addScheduleDialogFragment = new AddScheduleDialogFragment();

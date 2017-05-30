@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.bignerdranch.android.calendar3s.Calendar.MonthCalendarFragment;
 import com.bignerdranch.android.calendar3s.R;
+
 import com.bignerdranch.android.calendar3s.data.TagData;
 
 import java.util.ArrayList;
@@ -100,11 +101,12 @@ public class TagListDialogFragment extends DialogFragment {
             scheduleTagListViewAdapter.addItem(tagDatas.get(i).getData(0),tagDatas.get(i).getData(1),tagDatas.get(i).getData(2),
                     tagDatas.get(i).getData(5),tagDatas.get(i).isCheckbox());
 
-            scheduleTagListViewAdapter.notifyDataSetChanged();
+           // scheduleTagListViewAdapter.notifyDataSetChanged();
 
            /*Log.i("AAA",(scheduleTagListView.getItemAtPosition(0))*/
 
         }
+        scheduleTagListViewAdapter.notifyDataSetChanged();
         scheduleTagListView.setAdapter(scheduleTagListViewAdapter);
 
 
@@ -160,7 +162,7 @@ public class TagListDialogFragment extends DialogFragment {
 
         getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode,intent);
     }
-    class ScheduleTagListViewItem{
+  class ScheduleTagListViewItem{
         //태그ID, , 태그이름, 태그 색깔,그룹ID, checkedOrNot
 
         private String tagId;
@@ -206,7 +208,8 @@ public class TagListDialogFragment extends DialogFragment {
     }
 
 
-    class ScheduleTagListViewAdapter  extends BaseAdapter {
+
+  class ScheduleTagListViewAdapter  extends BaseAdapter {
 
         // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
         private ArrayList<ScheduleTagListViewItem> ScheduleTagListViewItemList = new ArrayList<ScheduleTagListViewItem>() ;
@@ -302,4 +305,8 @@ public class TagListDialogFragment extends DialogFragment {
 
 
     }
+
+
+
+
 }

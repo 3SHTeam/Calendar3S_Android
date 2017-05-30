@@ -143,13 +143,23 @@ public class TagDIalogFragment extends DialogFragment {
 
 
                 colors.add("#82B926");
-                colors.add("#a276eb");
+                /*colors.add("#a276eb");
                 colors.add("#6a3ab2");
                 colors.add("#666666");
                 colors.add("#FFFF00");
                 colors.add("#3C8D2F");
                 colors.add("#FA9F00");
-                colors.add("#FF0000");
+                colors.add("#FF0000");*/
+
+                colors.add("#C0FFFF");
+                colors.add("#A0A0FF");
+                colors.add("#87F5F5");
+                colors.add("#FFE3EE");
+                colors.add("#FA9CC5");
+                colors.add("#FFFF96");
+                colors.add("#FFC341");
+                colors.add("#bebebe");
+                colors.add("#FF5AD9");
 
                 colorPicker.setColors(colors).setDefaultColorButton(Color.parseColor("#f84c44")).setColumns(5).
                         setOnChooseColorListener
