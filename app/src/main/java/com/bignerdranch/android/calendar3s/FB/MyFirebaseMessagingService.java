@@ -1,21 +1,30 @@
 package com.bignerdranch.android.calendar3s.FB;
 
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.bignerdranch.android.calendar3s.MainActivity;
+
+import com.bignerdranch.android.calendar3s.NotificationActivity;
 import com.bignerdranch.android.calendar3s.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.i("jmlee", "MyFirebaseMessagingService.onMessageReceived");
@@ -23,10 +32,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody) {
+
+
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("msgFromMyPC",messageBody);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */,
+                intent,PendingIntent.FLAG_ONE_SHOT
+                /*PendingIntent.FLAG_ONE_SHOT*/);
+
+
+
+        Intent cancelIntent = new Intent(this, NotificationActivity.class);
+
+
+
+        cancelIntent.putExtra("notificationId",1);
+
+        PendingIntent cancelPendingIntent = PendingIntent.getActivity(this,1,cancelIntent,PendingIntent.FLAG_ONE_SHOT);
+
+
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
@@ -35,10 +60,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(null);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+
+
+
+        notificationBuilder.addAction(android.R.drawable.star_on,"확인",pendingIntent);
+        notificationBuilder.addAction(android.R.drawable.star_off,"취소",cancelPendingIntent);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 
