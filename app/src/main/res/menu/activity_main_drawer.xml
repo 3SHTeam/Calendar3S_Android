@@ -12,9 +12,9 @@
             android:icon="@drawable/ic_person_black_48dp"
             android:title="Community" />
         <item
-            android:id="@+id/Settings"
+            android:id="@+id/ScheduleMSG"
             android:icon="@drawable/ic_settings_black_48dp"
-            android:title="Setting" />
+            android:title="ScheduleMessage" />
         <item
             android:id="@+id/Logout"
             android:icon="@drawable/ic_clear_black_48dp"
