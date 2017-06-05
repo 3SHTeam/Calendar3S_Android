@@ -6,6 +6,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -36,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ieem5 on 2017-05-12.
@@ -257,17 +259,25 @@ public class DailyScheduleViewFragment extends Fragment {
 
                 ScheduleTagListViewItemNoCBox item =   (ScheduleTagListViewItemNoCBox) listView.getItemAtPosition(position);
                 selecetedTagName = item.getTagTitle();
+                Log.d("TATATA","selecetedTagName : "+selecetedTagName);
                 //사용자가 태그를 선택하지 않았으면 기본 태그로 설정
 
-                for( int i=0;i<tagDatas.size();i++){
-                    if(tagDatas.get(i).getData(1).equals(selecetedTagName)){
-                        //태그이름과 일치하는 태그 아이디 저장
 
-                        selecetedTagId = tagDatas.get(i).getData(0);
-                        //아이디를 MAIN으로 보내야한다!!!
-                        break;
-                    }
-                }//end of for
+                    for( int i=0;i<tagDatas.size();i++){
+                        if(tagDatas.get(i).getData(1).equals(selecetedTagName)){
+                            //태그이름과 일치하는 태그 아이디 저장
+
+                            selecetedTagId = tagDatas.get(i).getData(0);
+                            //아이디를 MAIN으로 보내야한다!!!
+                            break;
+                        }
+                    }//end of for
+
+                /*if( selecetedTagName==null){
+                    selecetedTagId = tagDatas.get(0).getData(0);
+                    Log.d("TATATA","NULL selecetedTagName : "+selecetedTagName);
+                }*/
+
             }
 
 
@@ -287,16 +297,36 @@ public class DailyScheduleViewFragment extends Fragment {
 
                 tagListLayout.setVisibility(View.GONE);
 
-                //선택된 리스트뷰이 이름으로 텍스트뷰 세팅하고 아이디 출력해야 한다.
+                //선택된 리스트뷰 아이템의 이름으로 텍스트뷰 세팅하고 아이디 출력해야 한다.
                selectedTagTv.setText(selecetedTagName);
-                Toast.makeText(getActivity(),"tagName : "+selecetedTagName+" , "+
+                /*Toast.makeText(getActivity(),"tagName : "+selecetedTagName+" , "+
                         "tagId : "+selecetedTagId,Toast.LENGTH_SHORT).show();
 
-
+*/
+                Toast.makeText(getActivity(),"태그 : "+selecetedTagName,Toast.LENGTH_SHORT).show();
             }
 
 
         });
+
+        final Geocoder geocoder = new Geocoder(getActivity());
+        showMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                List<Address> list = null;
+                String location = LocationEv.getText().toString();
+                // double  lat =
+                //지도 인텐트
+                Uri uri = Uri.parse("geo:38.899533,-77.036476");
+
+                Intent it = new Intent(Intent.ACTION_VIEW,uri);
+                startActivity(it);
+
+
+            }
+        });
+
 
         //수정 버튼 클릭  빈칸있을 때 처리하기!!!
         modifyBtn.setOnClickListener(new View.OnClickListener() {
@@ -306,6 +336,22 @@ public class DailyScheduleViewFragment extends Fragment {
                 String eventId = getEventData().getData(0);
                 //태그 아이디
                 String tagId = selecetedTagId;
+                if(tagId ==null){
+                   String originalTag =  selectedTagTv.getText().toString().trim();
+                    for( int i=0;i<tagDatas.size();i++){
+                        if(tagDatas.get(i).getData(1).equals(originalTag)){
+                            //태그이름과 일치하는 태그 아이디 저장
+
+                            tagId = tagDatas.get(i).getData(0);
+                            //아이디를 MAIN으로 보내야한다!!!
+                            break;
+                        }
+                    }//end of for
+                   // tagId = tagDatas.get(0).getData(0);
+                    Log.d("TATATA"," default tagId : "+tagId);
+                }
+                Log.d("TATATA"," SS selecetedTagName : "+selecetedTagName);
+                Log.d("TATATA","SS selecetedTagId : "+tagId);
                 //날짜,시간  DB:yyyyMMddMMmm 구글은 long 형식으로  calendat.getTime~~
                 //시작시간
                 String startHour = startTimeTV.getText().toString().substring(0,2);
