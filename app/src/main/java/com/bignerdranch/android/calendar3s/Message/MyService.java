@@ -56,6 +56,7 @@ public class MyService extends Service {
                 for(String clip : KeyWordArray){
                     if(a.contains(clip)){
                         saveMMSInfo(a, "Clipboard", context);
+                        break;
                     }
                 }
             }
