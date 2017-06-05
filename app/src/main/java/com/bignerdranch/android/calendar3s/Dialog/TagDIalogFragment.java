@@ -114,7 +114,13 @@ public class TagDIalogFragment extends DialogFragment {
                     scheduleTagListViewAdapter.notifyDataSetChanged();*/
 
                    // tagName.getText().toString(),hexColor
-                    InsertTag(Activity.RESULT_OK,tagName.getText().toString(),hexColor);
+                    if( hexColor == null){
+                        hexColor = "#FF5AD9";
+                    }
+
+                        InsertTag(Activity.RESULT_OK,tagName.getText().toString(),hexColor);
+
+
 
                 }
 
