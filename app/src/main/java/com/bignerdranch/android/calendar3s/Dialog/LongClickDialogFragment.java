@@ -66,7 +66,7 @@ public class LongClickDialogFragment extends DialogFragment {
 
         //2017년 1월 17일 일정'   --> 선택한 날짜 받아와야 함.
 String dialogmentTitle =selectedDate ;
-        final String []DialogItem={"추가","수정","동결","삭제"};
+        final String []DialogItem={"추가"};
         AlertDialog.Builder  builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(dialogmentTitle)
                 .setItems(DialogItem, new DialogInterface.OnClickListener() {
@@ -110,18 +110,13 @@ String dialogmentTitle =selectedDate ;
 
 
 
-                          }else if(DialogItem[which].equals("수정")){
-
-
-
-
-
-                          }else if(DialogItem[which].equals("동결")){
-                              calData.setFreezen(true);//해당 날자 동결시키기
-
-                          }else{//삭제
-
                           }
+
+
+
+
+
+
                     }
 
 
