@@ -1,10 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -17,27 +14,28 @@
             android:layout_height="wrap_content"
             android:id="@+id/addScheduleDate"
             />
-      <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-          <TextView
+            <TextView
 
-              android:text="스케줄명"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
+                android:text="스케줄명"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-          <EditText
+            <EditText
 
-              android:gravity="center_horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:inputType="textPersonName"
-              android:hint="스케줄명을 입력하시오"
-              android:ems="10"
-              android:id="@+id/scheduleEditText" />
-      </LinearLayout>
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:hint="스케줄명을 입력하시오"
+                android:ems="10"
+                android:id="@+id/scheduleEditText" />
+        </LinearLayout>
+
 
 
 
@@ -59,18 +57,18 @@
         </LinearLayout>
         <LinearLayout
             android:visibility="gone"
-            android:id="@+id/tagListViewLayout"
+            android:id="@+id/tagListViewLayoutInGroupSche"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
                 android:text="확인"
-                android:id="@+id/selectTagOkBtn"
+                android:id="@+id/selectTagOkBtnInGroupSche"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ListView
                 android:listSelector="#00bbff"
-                android:id="@+id/tagListView"
+                android:id="@+id/tagListViewInGroupSche"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></ListView>
 
@@ -171,33 +169,27 @@
 
 
                 </LinearLayout>
-<LinearLayout
-    android:layout_marginTop="80dp"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="80dp"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-    <Button
-        android:layout_weight="1"
-        android:layout_marginTop="100dp"
-        android:layout_gravity="center_horizontal"
+                    <Button
 
-        android:text="수정"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:id="@+id/modifyBtn" />
-    <Button
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="100dp"
+                        android:layout_gravity="center_horizontal"
 
-        android:text="삭제"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:id="@+id/deleteBtn" />
-</LinearLayout>
+                        android:text="추가"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:id="@+id/addBtnInGroupSche" />
+
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-</LinearLayout>
 
+</LinearLayout>

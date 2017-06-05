@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
 
-            android:textSize="30dp"
-            android:gravity="center_horizontal"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/addScheduleDate"
-            />
-      <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+            android:layout_height="wrap_content">
 
-          <TextView
+            <TextView
 
-              android:text="스케줄명"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
+                android:text="스케줄명"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-          <EditText
+            <EditText
 
-              android:gravity="center_horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:inputType="textPersonName"
-              android:hint="스케줄명을 입력하시오"
-              android:ems="10"
-              android:id="@+id/scheduleEditText" />
-      </LinearLayout>
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:hint="스케줄명을 입력하시오"
+                android:ems="10"
+                android:id="@+id/scheduleEditText" />
+        </LinearLayout>
+
+            <TextView
+
+
+                tools:scrollbars="vertical"
+                android:textIsSelectable="true"
+
+                android:scrollbars="vertical"
+                android:text="문자 메시지 내용"
+                android:id="@+id/msgcontents"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+
 
 
 
@@ -57,24 +64,26 @@
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
+
         <LinearLayout
             android:visibility="gone"
-            android:id="@+id/tagListViewLayout"
+            android:id="@+id/tagListViewLayoutInaddMsgSchedule"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
                 android:text="확인"
-                android:id="@+id/selectTagOkBtn"
+                android:id="@+id/selectTagOkBtnInaddMsgSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ListView
                 android:listSelector="#00bbff"
-                android:id="@+id/tagListView"
+                android:id="@+id/tagListViewInaddMsgSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></ListView>
 
         </LinearLayout>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -171,33 +180,33 @@
 
 
                 </LinearLayout>
-<LinearLayout
-    android:layout_marginTop="80dp"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_marginTop="80dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    <Button
-        android:layout_weight="1"
-        android:layout_marginTop="100dp"
-        android:layout_gravity="center_horizontal"
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_marginTop="100dp"
+                        android:layout_gravity="center_horizontal"
 
-        android:text="수정"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:id="@+id/modifyBtn" />
-    <Button
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
+                        android:text="추가"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:id="@+id/addMsgScheduleBtn" />
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_gravity="center_horizontal"
 
-        android:text="삭제"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:id="@+id/deleteBtn" />
-</LinearLayout>
+                        android:text="삭제"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:id="@+id/deleteBtn" />
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-</LinearLayout>
 
+</LinearLayout>
