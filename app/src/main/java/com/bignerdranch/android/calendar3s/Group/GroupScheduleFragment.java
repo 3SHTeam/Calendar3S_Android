@@ -368,12 +368,12 @@ public class GroupScheduleFragment extends Fragment implements MainActivity.onKe
 
             int  hour = data.getIntExtra(TimePickerFragment.EXTRA_TIME_HOUR,0);
             int  minute = data.getIntExtra(TimePickerFragment.EXTRA_TIME_MINUTE,0);
-            String AM_PM = data.getStringExtra(TimePickerFragment.EXTRA_TIME_AM_PM);
+
             String hourStr=""+hour;
             String minStr =""+minute;
             if(hour < 10) hourStr = "0"+hour;
             if( minute<10)minStr = "0"+minute;
-            startTimeTv.setText(hourStr+" : "+minStr+" "+AM_PM);
+            startTimeTv.setText(hourStr+" : "+minStr+" ");
 
 
 
@@ -383,12 +383,12 @@ public class GroupScheduleFragment extends Fragment implements MainActivity.onKe
 
             int  hour = data.getIntExtra(TimePickerFragment.EXTRA_TIME_HOUR,0);
             int  minute = data.getIntExtra(TimePickerFragment.EXTRA_TIME_MINUTE,0);
-            String AM_PM = data.getStringExtra(TimePickerFragment.EXTRA_TIME_AM_PM);
+
             String hourStr=""+hour;
             String minStr =""+minute;
             if(hour < 10) hourStr = "0"+hour;
             if( minute<10)minStr = "0"+minute;
-            endTimeTv.setText(hourStr+" : "+minStr+" "+AM_PM);
+            endTimeTv.setText(hourStr+" : "+minStr+" ");
 
         }
     }
