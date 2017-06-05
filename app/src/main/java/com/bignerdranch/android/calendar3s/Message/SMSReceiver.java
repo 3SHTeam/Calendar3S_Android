@@ -58,6 +58,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 if(str.contains(sms)){
                     saveSMSInfo(str, phNum, context);
                     Log.d("SMSTEST","saveInfo 실행");
+                    break;
                 }
             }
         }
