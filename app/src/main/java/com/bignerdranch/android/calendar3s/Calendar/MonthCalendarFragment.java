@@ -54,6 +54,8 @@ import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import static com.bignerdranch.android.calendar3s.MainActivity.context;
+
 /**
  * Created by Owner on 2017-01-11.
  */
@@ -173,6 +175,12 @@ public class MonthCalendarFragment extends Fragment implements MainActivity.onKe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        ((MainActivity) context).setOnKeyBackPressedListener(this);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment childFragment) {
+        super.onAttachFragment(childFragment);
         ((MainActivity) context).setOnKeyBackPressedListener(this);
     }
 
