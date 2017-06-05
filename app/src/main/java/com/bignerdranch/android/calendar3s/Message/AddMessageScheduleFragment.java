@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -112,9 +114,10 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
     private  Button dateSelectBtn;
     private  Button selectStartTimeBtn;
     private  Button selectfinishTimeBtn;
+    private Button showMapBtn;
 
     public static TextView DateView;// 날짜
-  //  public static TextView timeView;//시간: 시작시간~종료시간
+    //  public static TextView timeView;//시간: 시작시간~종료시간
 
     private TextView startTimeTv;
     private TextView endTimeTv;
@@ -142,11 +145,11 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
 
         main = ((MainActivity)getActivity());
         tagDatas = main.getTagDatas();
-           ;
+        ;
         //info[0]=sms내용
-              //  info[1]=주소 ,폰번호,날짜 ,시간 ,포지션
+        //  info[1]=주소 ,폰번호,날짜 ,시간 ,포지션
         info = ((MainActivity)getActivity()).getStr().split("@@@@@@@");
-      //  Log.d("HASHMAP","출력"+pref.getString("ListSelect",""));
+        //  Log.d("HASHMAP","출력"+pref.getString("ListSelect",""));
         position = info[1].split("@,@,@,@");//position[1] = 리스트 아이템 포지션 번호
         bring_message_time = position[0].split("  ");//bring_message_time[0]= 폰번호
         //bring_message_time[1]= 날짜     bring_message_time[0]= 시간
@@ -161,13 +164,18 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
             }
             cursor.close();
         }
-        if(displayName==null){
-            //스케줄 명에 넣기 . 연락처에 없는 번호면 번호를 넣기
-            displayName = bring_message_time[0];
+        if(displayName.equals("")){
+
+                Pattern PTitle = Pattern.compile("(^.+)");
+                Matcher matcher = PTitle.matcher(info[0]);
+
+                if(matcher.find()) {
+                    displayName = matcher.group(1).trim();
+                }
         }
 
-       if( bring_message_time[0].equals("Clipboard")){
-           displayName = "Clipboard";
+        if( bring_message_time[0].equals("Clipboard")){
+            displayName = "Clipboard";
 
         }
 
@@ -178,7 +186,7 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
         InputDate = setDate;
 
 //  2017/05//22
-         //날짜 패턴이랑 일치안하면 N반환
+        //날짜 패턴이랑 일치안하면 N반환
         if(!Date_Recognition(info[0], bring_message_time[1].trim()).equals("N")){
             InputDate = setDate = Date_Recognition(info[0], setDate);
             String datearry[];
@@ -229,10 +237,16 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
         }
 
 
-                           if(!Place_Recognition(info[0]).equals("N")){
-                              // LocationText.setText(Place_Recognition(info[0]));
-                               locationStr =        Place_Recognition(info[0]);
-                           }
+        if(!Time_Recognition2(info[0]).equals("N")){
+            String tr2[] = Time_Recognition2(info[0]).split("~");
+            setStartTime = tr2[0].trim();
+            EndTime = tr2[1].trim();
+        }
+
+        if(!Place_Recognition(info[0]).equals("N")){
+            // LocationText.setText(Place_Recognition(info[0]));
+            locationStr =        Place_Recognition(info[0]);
+        }
 
 
     }
@@ -243,7 +257,7 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-         v = layoutInflater.inflate(R.layout.fragment_add_msg_schdule,null);
+        v = layoutInflater.inflate(R.layout.fragment_add_msg_schdule,null);
 
 
 
@@ -266,6 +280,7 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
         dateSelectBtn = (Button)v.findViewById(R.id.dateBtn);
         selectStartTimeBtn = (Button)v.findViewById(R.id.startTimeBtn);
         selectfinishTimeBtn = (Button)v.findViewById(R.id.finishTimeBtn);
+        showMapBtn= (Button)v.findViewById(R.id.showMapBtn);
 
         addMsgScheduleBtn = (Button)v.findViewById(R.id.addMsgScheduleBtn);
 
@@ -289,16 +304,16 @@ public class AddMessageScheduleFragment extends Fragment implements MainActivity
 
         return v;
     }
-public String ymh(String s){
+    public String ymh(String s){
 
-    String dateOnlyNumber = s.replaceAll("[^0-9]", "");
-    String year =  dateOnlyNumber.substring(0,4);
-    String month = dateOnlyNumber.substring(4,6);
-    String date = dateOnlyNumber.substring(6,8);
+        String dateOnlyNumber = s.replaceAll("[^0-9]", "");
+        String year =  dateOnlyNumber.substring(0,4);
+        String month = dateOnlyNumber.substring(4,6);
+        String date = dateOnlyNumber.substring(6,8);
 
-    return year+" 년 "+month+" 월 "+date+" 일 ";
+        return year+" 년 "+month+" 월 "+date+" 일 ";
 
-}
+    }
 
     public Calendar makeCalToDate(String s){
 
@@ -320,8 +335,8 @@ public String ymh(String s){
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-   ///   2017/05/27
-      ;
+        ///   2017/05/27
+        ;
 
 
 
@@ -329,7 +344,7 @@ public String ymh(String s){
         startTimeTv.setText(setStartTime);
         endTimeTv.setText(EndTime);
         if( locationStr!=null)
-           locationEt.setText(locationStr);
+            locationEt.setText(locationStr);
         //메시지 스케줄 추가 버튼
         addMsgScheduleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,10 +352,10 @@ public String ymh(String s){
 
 
 
-               String scheduleStr =  scheduleNameEt.getText().toString();
+                String scheduleStr =  scheduleNameEt.getText().toString();
                 String locationStr = locationEt.getText().toString();
                 //20170529
-               String yyyyMMdd =  DateView.getText().toString().replaceAll("[^0-9]", "");
+                String yyyyMMdd =  DateView.getText().toString().replaceAll("[^0-9]", "");
 
                 String startTimeStr = startTimeTv.getText().toString().replaceAll("[^0-9]", "");
                 String endTimeStr = endTimeTv.getText().toString().replaceAll("[^0-9]", "");
@@ -367,7 +382,7 @@ public String ymh(String s){
                 endGoogleCalendar =    main.makeGoogleTimeFormat(yyyyMMdd,endHour,
                         endMin);
 
-               long startTimeLong = 0;
+                long startTimeLong = 0;
                 startTimeLong = startGoogleCalendar.getTimeInMillis();
                 long endTimeLong = 0;
                 endTimeLong =  endGoogleCalendar.getTimeInMillis();
@@ -385,7 +400,24 @@ public String ymh(String s){
 
                 eventData = main.addEventToCalendarandGetEventID(calId,startTimeLong,endTimeLong,scheduleStr,locationStr);
 
-               // long startMillis =
+                // long startMillis =
+
+            }
+        });
+
+        final Geocoder geocoder = new Geocoder(getActivity());
+        showMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                List<Address>list = null;
+                String location = locationEt.getText().toString();
+                // double  lat =
+                //지도 인텐트
+                Uri uri = Uri.parse("geo:38.899533,-77.036476");
+
+                Intent it = new Intent(Intent.ACTION_VIEW,uri);
+                startActivity(it);
 
             }
         });
@@ -427,8 +459,9 @@ public String ymh(String s){
 
                 //선택된 리스트뷰이 이름으로 텍스트뷰 세팅하고 아이디 출력해야 한다.
                 selectedTagTv.setText(selecetedTagName);
-                Toast.makeText(getActivity(),"tagName : "+selecetedTagName+" , "+
-                        "tagId : "+selecetedTagId,Toast.LENGTH_SHORT).show();
+              /*  Toast.makeText(getActivity(),"tagName : "+selecetedTagName+" , "+
+                        "tagId : "+selecetedTagId,Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(getActivity(),"태그 : "+selecetedTagName,Toast.LENGTH_SHORT).show();
 
 
             }
@@ -461,13 +494,13 @@ public String ymh(String s){
 /*
                 Calendar startCal = Calendar.getInstance();
                 startCal = makeCalToDate(ymh(InputDate));*/
-               // Date now =     makeCalToDate(st);
-              //  Date date = setTimeToTimePickerDate(getEventData().getData(4));
+                // Date now =     makeCalToDate(st);
+                //  Date date = setTimeToTimePickerDate(getEventData().getData(4));
                 Date now  = new Date();
-               FragmentManager manager = getFragmentManager();
+                FragmentManager manager = getFragmentManager();
                 TimePickerFragment startTimeDialog = TimePickerFragment.newInstance(now);
 
-               startTimeDialog.setTargetFragment(AddMessageScheduleFragment.this,REQUEST_START_TIME);
+                startTimeDialog.setTargetFragment(AddMessageScheduleFragment.this,REQUEST_START_TIME);
                 startTimeDialog.show(manager,DIALOG_START_TIME);
 
 
@@ -479,7 +512,7 @@ public String ymh(String s){
 
 
                 Date now  = new Date();
-              FragmentManager manager = getFragmentManager();
+                FragmentManager manager = getFragmentManager();
                 TimePickerFragment startTimeDialog = TimePickerFragment.newInstance(now);
 
 
@@ -1029,17 +1062,170 @@ public String ymh(String s){
     }
 
     public String Place_Recognition(String message){
-        Pattern PlaceP1 = Pattern.compile("(\\S*)( |)(근처|인근|주변|가까이)");
-        Pattern PlaceP2 = Pattern.compile("(\\S*\\S)(에서|[^에^\\s]서|로)");
+
+        String place = "N";
+        Pattern PlaceP1 = Pattern.compile("장(   |  | |)소( |)([\\D]|)( |)(.+)");
+        Pattern PlaceP2 = Pattern.compile("(\\S*)( |)(근처|인근|주변|가까이)");
+        Pattern PlaceP3 = Pattern.compile("(\\S*\\S)(에서|[^에^\\s]서|으로|[^으^\\s]로)");
 
         Matcher matcher = PlaceP1.matcher(message);
         if(matcher.find()){
-            return matcher.group(1);
+            return matcher.group(5).trim();
         }
+
         matcher = PlaceP2.matcher(message);
         if(matcher.find()){
-            return matcher.group(1);
+            return matcher.group(1).trim();
         }
+        matcher = PlaceP3.matcher(message);
+        while(matcher.find() && !matcher.group(1).contains("시")){
+            place = matcher.group(1).trim();
+        }
+
+        return place;
+    }
+
+    public String Time_Recognition2(String message){
+        int s_hour;
+        int e_hour;
+        String ss_hour = "00";
+        String se_hour = "00";
+        Pattern TimeP1 = Pattern.compile("([A-a][M-m]|오전|아침|[P-p][M-m]|오후|낮|저녁)( |)(0[0-9]|1[0-2]|[0-9])[시:]( |)" +
+                "(|0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])(|분)( |)(|~|부터|에서)" +
+                "( |)([A-a][M-m]|오전|아침|[P-p][M-m]|오후|낮|저녁)( |)(0[0-9]|1[0-2]|[0-9])[시:]");
+        Pattern TimeP2 = Pattern.compile("(0[0-9]|1[0-9]|2[0-3]|[1-9])[시:]( |)(|0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])(|분)( |)(|~|부터|에서)" +
+                "( |)(0[0-9]|1[0-9]|2[0-3]|[1-9])[시:]");
+        Pattern TimeP3 = Pattern.compile("(0[0-9]|1[0-2]|[0-9])(|시|:)( |)" +
+                "(|0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|[0-9])(|분)( |)([A-a][M-m]|오전|아침|[P-p][M-m]|오후|낮|저녁)( |)(|~|부터|에서)" +
+                "( |)(0[0-9]|1[0-2]|[0-9])(|시|:)( |)([A-a][M-m]|오전|아침|[P-p][M-m]|오후|낮|저녁)");
+
+        Matcher matcher = TimeP1.matcher(message);
+        if(matcher.find()){
+            if(matcher.group(1).equals("오전") || matcher.group(1).equals("아침") || matcher.group(1).equals("am") ||
+                    matcher.group(1).equals("Am") || matcher.group(1).equals("AM")){
+                s_hour = Integer.valueOf(matcher.group(3).trim()).intValue();
+                if(s_hour<10){
+                    ss_hour = "0"+s_hour;
+                }
+                else{
+                    ss_hour = ""+s_hour;
+                }
+                if(matcher.group(10).equals("오전") || matcher.group(10).equals("아침") || matcher.group(10).equals("am") ||
+                        matcher.group(10).equals("Am") || matcher.group(10).equals("AM")){
+                    e_hour = Integer.valueOf(matcher.group(12).trim()).intValue();
+                    if(e_hour<10){
+                        se_hour = "0"+e_hour;
+                    }
+                    else{
+                        se_hour = ""+e_hour;
+                    }
+                    return ss_hour + ":00~" + se_hour + ":00";
+                }
+                else if(matcher.group(10).equals("pm") || matcher.group(10).equals("Pm") || matcher.group(10).equals("PM") ||
+                        matcher.group(10).equals("오후") || matcher.group(10).equals("낮") || matcher.group(10).equals("저녁")){
+                    e_hour = Integer.valueOf(matcher.group(12).trim()).intValue() + 12;
+                    if(e_hour == 24)
+                        se_hour = "00";
+                    else
+                        se_hour = e_hour+"";
+
+                    return  ss_hour + ":00~" + se_hour + ":00";
+                }
+            }
+            else if(matcher.group(1).equals("pm") || matcher.group(1).equals("Pm") || matcher.group(1).equals("PM") ||
+                    matcher.group(1).equals("오후") || matcher.group(1).equals("낮") || matcher.group(1).equals("저녁")){
+                s_hour = Integer.valueOf(matcher.group(3).trim()).intValue() + 12;
+                if(s_hour == 24)
+                    ss_hour = "00";
+                else
+                    ss_hour = s_hour+"";
+
+                if(matcher.group(10).equals("pm") || matcher.group(10).equals("Pm") || matcher.group(10).equals("PM") ||
+                        matcher.group(10).equals("오후") || matcher.group(10).equals("낮") || matcher.group(10).equals("저녁")){
+                    e_hour = Integer.valueOf(matcher.group(12).trim()).intValue() + 12;
+                    if(e_hour == 24)
+                        se_hour = "00";
+                    else
+                        se_hour = e_hour+"";
+
+                    return  ss_hour + ":00~" + se_hour + ":00";
+                }
+            }
+        }
+
+        matcher = TimeP2.matcher(message);
+        if(matcher.find()){
+            s_hour = Integer.valueOf(matcher.group(1).trim()).intValue();
+            if(s_hour<10){
+                ss_hour = "0"+s_hour;
+            }
+            else{
+                ss_hour = ""+s_hour;
+            }
+            e_hour = Integer.valueOf(matcher.group(8).trim()).intValue();
+            if(e_hour<10){
+                se_hour = "0"+e_hour;
+            }
+            else{
+                se_hour = ""+e_hour;
+            }
+            return  ss_hour + ":00~" + se_hour + ":00";
+        }
+
+        matcher = TimeP3.matcher(message);
+        if(matcher.find()){
+            if(matcher.group(7).equals("오전") || matcher.group(7).equals("아침") || matcher.group(7).equals("am") ||
+                    matcher.group(7).equals("Am") || matcher.group(7).equals("AM")){
+                s_hour = Integer.valueOf(matcher.group(1).trim()).intValue();
+                if(s_hour<10){
+                    ss_hour = "0"+s_hour;
+                }
+                else{
+                    ss_hour = ""+s_hour;
+                }
+                if(matcher.group(14).equals("오전") || matcher.group(14).equals("아침") || matcher.group(14).equals("am") ||
+                        matcher.group(14).equals("Am") || matcher.group(14).equals("AM")){
+                    e_hour = Integer.valueOf(matcher.group(11).trim()).intValue();
+                    if(e_hour<10){
+                        se_hour = "0"+e_hour;
+                    }
+                    else{
+                        se_hour = ""+e_hour;
+                    }
+                    return ss_hour + ":00~" + se_hour + ":00";
+                }
+                else if(matcher.group(14).equals("pm") || matcher.group(14).equals("Pm") || matcher.group(14).equals("PM") ||
+                        matcher.group(14).equals("오후") || matcher.group(14).equals("낮") || matcher.group(14).equals("저녁")){
+                    e_hour = Integer.valueOf(matcher.group(11).trim()).intValue() + 12;
+                    if(e_hour == 24)
+                        se_hour = "00";
+                    else
+                        se_hour = e_hour+"";
+
+                    return  ss_hour + ":00~" + se_hour + ":00";
+                }
+            }
+            else if(matcher.group(7).equals("pm") || matcher.group(7).equals("Pm") || matcher.group(7).equals("PM") ||
+                    matcher.group(7).equals("오후") || matcher.group(7).equals("낮") || matcher.group(7).equals("저녁")){
+                s_hour = Integer.valueOf(matcher.group(1).trim()).intValue() + 12;
+                if(s_hour == 24)
+                    ss_hour = "00";
+                else
+                    ss_hour = s_hour+"";
+
+                if(matcher.group(14).equals("pm") || matcher.group(14).equals("Pm") || matcher.group(14).equals("PM") ||
+                        matcher.group(14).equals("오후") || matcher.group(14).equals("낮") || matcher.group(14).equals("저녁")){
+                    e_hour = Integer.valueOf(matcher.group(11).trim()).intValue() + 12;
+                    if(e_hour == 24)
+                        se_hour = "00";
+                    else
+                        se_hour = e_hour+"";
+
+                    return  ss_hour + ":00~" + se_hour + ":00";
+                }
+            }
+        }
+
 
         return "N";
     }
