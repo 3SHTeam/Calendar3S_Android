@@ -346,8 +346,9 @@ long CalID;
                 }
                 //선택된 리스트뷰이 이름으로 텍스트뷰 세팅하고 아이디 출력해야 한다.
                 selectedTagTv.setText(selecetedTagName);
-                Toast.makeText(getActivity(),defaultTag+"tagName : "+selecetedTagName+" , "+
-                        "tagId : "+selectedTagId,Toast.LENGTH_SHORT).show();
+               /* Toast.makeText(getActivity(),defaultTag+"tagName : "+selecetedTagName+" , "+
+                        "tagId : "+selectedTagId,Toast.LENGTH_SHORT).show();*/
+               Toast.makeText(getActivity(),"tagName : "+selecetedTagName,Toast.LENGTH_SHORT).show();
 
               /*  //이거 부를 때 태그 이름 불러와서 뿌려줘야 함
                tagDatas =  ((MainActivity)getActivity()).getTagDatas();
@@ -483,10 +484,10 @@ final Geocoder geocoder = new Geocoder(getActivity());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/HH/mm");
                     String stime =  sdf.format(Long.parseLong(eventDataToMain.getData(4)));
                     String etime = sdf.format(Long.parseLong(eventDataToMain.getData(5)));
-                    Toast.makeText(getActivity(),"eventId: "+eventDataToMain.getData(7)+"Added Successfully! Title : "+
+                   /* Toast.makeText(getActivity(),"eventId: "+eventDataToMain.getData(7)+"Added Successfully! Title : "+
                                     eventDataToMain.getData(2)+"시작시간 : "+
                                     stime+"종료시간 : "+etime+"장소 : "+eventDataToMain.getData(3)
-                            ,Toast.LENGTH_LONG).show();
+                            ,Toast.LENGTH_LONG).show();*/
 
                     Log.i("ttt","eventId: "+eventDataToMain.getData(7)+"Added Successfully! Title : "+
                             eventDataToMain.getData(2)+"시작시간 : "+
