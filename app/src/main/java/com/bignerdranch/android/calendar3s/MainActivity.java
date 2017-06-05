@@ -442,11 +442,11 @@ public class MainActivity extends AppCompatActivity
                             Log.d("msgTEST", " 구글 수정 후 시간 : " + "StartTime : " + test1 + ", " + "EndTime : " + test2);
                         }else if (type.equals("createGroupSchedule")) {
                             SMaster = root.getString("SMaster").toString();
+                            Sname = root.getString("Sname").toString();
                             Place = root.getString("Place").toString();
                             StartTime = root.getString("StartTime").toString();
                             EndTime = root.getString("EndTime").toString();
                             Tagid = root.getString("Tagid").toString();
-                            Sname = root.getString("Sname").toString();
                             Gid = root.getString("Gid").toString();
 
 
@@ -1559,7 +1559,10 @@ public class MainActivity extends AppCompatActivity
         //eventData객체를 MonthCalendarFragment로 전달해서서  CalData의 eventDataList에 추가해야 함
 
         // Toast.makeText(getActivity(),"eventData : "+insertEventData.getTitle(),Toast.LENGTH_SHORT).show();
-        Toast.makeText(MainActivity.this, "eventId: " + insertEventData.getData(7) + " eventData : " + insertEventData.getData(2), Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(MainActivity.this, "eventId: " + insertEventData.getData(7) + " eventData : " +
+                insertEventData.getData(2), Toast.LENGTH_SHORT).show();*/
+
+        Toast.makeText(MainActivity.this, "스케줄이 추가되었습니다!", Toast.LENGTH_SHORT).show();
         //
 
         return insertEventData;
